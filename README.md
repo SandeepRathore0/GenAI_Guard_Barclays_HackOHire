@@ -41,11 +41,11 @@ graph TD
     end
     
     subgraph "Isolated Microservices"
-        TextGuard == "Semantic Context" ==> LLM[LLM Guard Microservice (Port 8001)]
+        TextGuard == "Semantic Context" ==> LLM["LLM Guard Microservice (Port 8001)"]
         FileGuard == "Behavioral Logs" ==> LLM
         WebGuard == "SHAP Explanations" ==> LLM
         
-        FileGuard == "Untrusted Binaries" ==> Sandbox[Docker FileSandbox (Port 8003)]
+        FileGuard == "Untrusted Binaries" ==> Sandbox["Docker FileSandbox (Port 8003)"]
     end
 ```
 
