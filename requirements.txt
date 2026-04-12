@@ -1,0 +1,48 @@
+# ==========================================
+# GenAi-Guard Dependencies
+# ==========================================
+
+# Core Web Framework & Configuration
+fastapi>=0.109.2
+uvicorn>=0.27.1
+python-multipart>=0.0.9
+pydantic>=2.6.1
+python-dotenv>=1.0.1
+
+# HTTP & Network Handling
+requests>=2.31.0
+httpx>=0.27.0
+
+# Data Science & Machine Learning Core
+scikit-learn>=1.4.0
+pandas>=2.2.0
+numpy
+xgboost
+joblib
+scipy
+
+# Web Guard & URL Analysis
+beautifulsoup4
+rapidfuzz
+tld
+shap
+
+# Email Guard (Google API Integration)
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
+
+# File Guard & Sandbox
+PyPDF2
+docker
+python-docx
+
+# Audio Guard & Deep Learning Models
+torch
+torchaudio
+transformers
+soundfile
+
+# Development & Model Training scripts
+datasets
+librosa

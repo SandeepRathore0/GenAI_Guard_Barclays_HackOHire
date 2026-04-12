@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenAI Guard | Logs</title>
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="brand">
+            <i class="fas fa-shield-alt"></i> GenAI Guard
+        </div>
+        <a href="/dashboard" class="nav-item"><i class="fas fa-chart-line"></i> Dashboard</a>
+        <a href="#" class="nav-item active"><i class="fas fa-database"></i> Logs</a>
+        <a href="settings.html" class="nav-item"><i class="fas fa-cogs"></i> Settings</a>
+        <div class="sidebar-footer">
+            <div style="font-size: 0.8rem; color: var(--text-muted);">
+                <i class="fas fa-user-circle"></i> Admin User<br>
+                <span style="color: var(--success); font-size: 0.7rem;">● Connected</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main-content">
+
+        <div class="top-bar">
+            <div>
+                <h1>Security Logs</h1>
+                <p style="margin: 5px 0 0; color: var(--text-muted);">Historical record of all security scans</p>
+            </div>
+            <button onclick="fetchHistory()" class="launch-btn"
+                style="padding: 10px 16px; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-sync" style="font-size: 1rem; margin: 0;"></i> Refresh
+            </button>
+        </div>
+
+        <div class="table-container">
+            <div class="filter-bar">
+                <input type="text" id="searchInput" placeholder="Search inputs..." onkeyup="filterLogs()">
+                <select id="statusFilter" onchange="filterLogs()">
+                    <option value="all">All Status</option>
+                    <option value="THREAT">Threats Only</option>
+                    <option value="SAFE">Safe Only</option>
+                </select>
+            </div>
+            <div id="logContent">
+                <p style="color: var(--text-muted); text-align: center;">Loading logs...</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const API_BASE = "http://127.0.0.1:8000";
+        let allLogs = [];
+
+        async function fetchHistory() {
+            try {
+                const res = await fetch(`${API_BASE}/api/v1/history`);
+                allLogs = await res.json();
+                renderLogs(allLogs);
+            } catch (e) {
+                console.error("Error fetching history", e);
+                document.getElementById("logContent").innerHTML = "<p style='color: var(--danger); text-align: center;'>Error loading logs.</p>";
+            }
+        }
+
+        function renderLogs(logs) {
+            const container = document.getElementById("logContent");
+            if (logs.length === 0) {
+                container.innerHTML = "<p style='color: var(--text-muted); text-align:center;'>No logs found.</p>";
+                return;
+            }
+
+            let html = "<table class='log-table'>";
+            html += `<thead><tr>
+                        <th width="15%">Time</th>
+                        <th width="10%">Module</th>
+                        <th width="30%">Input</th>
+                        <th width="10%">Score</th>
+                        <th width="25%">Alerts</th>
+                        <th width="10%">Status</th>
+                    </tr></thead><tbody>`;
+
+            logs.forEach(item => {
+                const statusClass = item.status === "THREAT" ? "badge-danger" : "badge-safe";
+                const alerts = item.alerts.length > 0 ? item.alerts.join(", ") : "-";
+                // Truncate long inputs
+                let inputPreview = item.input_type || '-';
+                if (inputPreview.length > 50) inputPreview = inputPreview.substring(0, 50) + "...";
+
+                html += `
+                    <tr>
+                        <td style="font-family:'JetBrains Mono'">${item.timestamp}</td>
+                        <td><span class="module-tag">${item.module}</span></td>
+                        <td style="color:var(--primary); font-family:var(--font-mono); font-size:0.9rem" title="${item.input_type}">${inputPreview}</td>
+                        <td>${item.risk_score}</td>
+                        <td style="font-size: 0.85rem; color: var(--danger);">${alerts}</td>
+                        <td><span class="badge ${statusClass}">${item.status}</span></td>
+                    </tr>
+                `;
+            });
+            html += "</tbody></table>";
+            container.innerHTML = html;
+        }
+
+        function filterLogs() {
+            const search = document.getElementById("searchInput").value.toLowerCase();
+            const status = document.getElementById("statusFilter").value;
+
+            const filtered = allLogs.filter(item => {
+                const matchesSearch = (item.input_type || "").toLowerCase().includes(search) ||
+                    (item.module || "").toLowerCase().includes(search);
+                const matchesStatus = status === "all" || item.status === status;
+                return matchesSearch && matchesStatus;
+            });
+
+            renderLogs(filtered);
+        }
+
+        // Init
+        fetchHistory();
+    </script>
+</body>
+
+</html>

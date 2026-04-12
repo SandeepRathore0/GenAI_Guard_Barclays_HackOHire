@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenAI Guard | Dashboard</title>
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="brand">
+            <i class="fas fa-shield-alt"></i> GenAI Guard
+        </div>
+
+        <div class="nav-menu">
+            <a href="#" class="nav-item active" onclick="showScanner('text')"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="#" class="nav-item" onclick="showScanner('text')"><i class="fas fa-envelope-open-text"></i>
+                Phishing Scanner</a>
+            <a href="#" class="nav-item" onclick="showScanner('audio')"><i class="fas fa-microphone-lines"></i> Deepfake
+                Scanner</a>
+            <a href="#" class="nav-item" onclick="showScanner('web')"><i class="fas fa-globe"></i> Website Checker</a>
+            <a href="#" class="nav-item" onclick="showScanner('file')"><i class="fas fa-file-shield"></i> File Guard</a>
+            <a href="#" class="nav-item" onclick="showScanner('email')"><i class="fas fa-envelope-open"></i> Email Sandbox</a>
+            <a href="#" class="nav-item" onclick="showScanner('gmail-stream')"><i class="fas fa-stream"></i> Live Gmail Stream</a>
+            <a href="logs.html" class="nav-item"><i class="fas fa-database"></i> Logs</a>
+            <div style="border-top: 1px solid var(--border-color); margin: 10px 0;"></div>
+
+        </div>
+
+        <div class="sidebar-footer">
+            <p>Version 2.0.1</p>
+            <p style="color: var(--success);"><i class="fas fa-circle" style="font-size:0.6rem"></i> System Online</p>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- Header -->
+        <header class="header">
+            <div class="page-title">
+                <h1>Dashboard</h1>
+                <p style="color: var(--text-muted)">Real-time GenAI Security Monitoring</p>
+            </div>
+            <div class="user-profile">
+                <i class="fas fa-user-circle fa-lg"></i>
+                <span>Admin User</span>
+            </div>
+        </header>
+
+        <!-- Stats Row -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span>Total Scans</span>
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-value" id="stat-total-scans">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span>Threats Detected</span>
+                    <i class="fas fa-exclamation-circle" style="color: var(--danger)"></i>
+                </div>
+                <div class="stat-value" id="stat-threats" style="color: var(--danger)">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span>Active Modules</span>
+                    <i class="fas fa-cubes"></i>
+                </div>
+                <div class="stat-value">4</div>
+                <div style="font-size: 0.8rem; color: var(--success)">Text, Web, File, Audio</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span>System Status</span>
+                    <i class="fas fa-server"></i>
+                </div>
+                <div class="stat-value" style="color: var(--success); font-size: 1.5rem;">OPERATIONAL</div>
+            </div>
+        </div>
+
+        <!-- Dashboard Layout -->
+        <div class="dashboard-layout">
+
+            <!-- Left Column: Quick Launch + Active Scanner -->
+            <div class="column-main">
+
+                <!-- Quick Launch -->
+                <section class="quick-launch">
+                    <div class="section-title">
+                        <i class="fas fa-rocket"></i> Quick Launch
+                    </div>
+                    <div class="launch-grid">
+                        <div class="launch-btn" onclick="showScanner('text')">
+                            <i class="fas fa-envelope-open-text" style="color: var(--primary)"></i>
+                            Text Scanner
+                        </div>
+                        <div class="launch-btn" onclick="showScanner('audio')">
+                            <i class="fas fa-microphone-lines" style="color: var(--accent)"></i>
+                            Audio Scanner
+                        </div>
+                        <div class="launch-btn" onclick="showScanner('web')">
+                            <i class="fas fa-globe" style="color: var(--warning)"></i>
+                            Web Scanner
+                        </div>
+                        <div class="launch-btn" onclick="showScanner('file')">
+                            <i class="fas fa-file-shield" style="color: var(--danger)"></i>
+                            File Scanner
+                        </div>
+                        <div class="launch-btn" onclick="showScanner('email')">
+                            <i class="fas fa-envelope-open" style="color: #ff6b6b"></i>
+                            Email Sandbox
+                        </div>
+                        <div class="launch-btn" onclick="showScanner('chat')">
+                            <i class="fas fa-comments" style="color: var(--success)"></i>
+                            Secure Chat
+                        </div>
+                        <div class="launch-btn" onclick="showScanner('gmail-stream')">
+                            <i class="fas fa-stream" style="color: #00ffcc"></i>
+                            Live Stream
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Scanner Results Area (Dynamic Content) -->
+                <section class="scanner-results-area">
+
+                    <!-- Text Scanner Card -->
+                    <div id="text-card" class="result-card active">
+                        <div class="section-title">
+                            <i class="fas fa-envelope-open-text" style="color: var(--primary)"></i> Phishing & Text
+                            Scanner
+                        </div>
+                        <div class="input-group">
+                            <textarea id="textInput"
+                                placeholder="Paste email content, chat logs, or prompt text here..."></textarea>
+                        </div>
+                        <div class="input-group" style="width: 200px;">
+                            <select id="textType">
+                                <option value="all">All Checks</option>
+                                <option value="phishing">Phishing Only</option>
+                                <option value="injection">Prompt Injection</option>
+                            </select>
+                        </div>
+                        <button class="btn-action" onclick="analyzeText()">
+                            <i class="fas fa-search"></i> Analyze Text
+                        </button>
+                        <div id="textResult" class="result-output">Ready for analysis...</div>
+                    </div>
+
+                    <!-- Web Scanner Card -->
+                    <div id="web-card" class="result-card">
+                        <div class="section-title">
+                            <i class="fas fa-globe" style="color: var(--warning)"></i> Website & URL Scanner
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="urlInput" placeholder="Enter URL (e.g., http://suspicious-site.com)">
+                        </div>
+                        <button class="btn-action" onclick="scanWeb()">
+                            <i class="fas fa-globe"></i> Scan URL
+                        </button>
+                        <div id="webResult" class="result-output">Ready to scan...</div>
+                        <div id="webReason" class="reason-box" style="display:none; margin-top:10px; padding:12px; border-left: 4px solid var(--primary); background: var(--input-bg); border-radius: 4px; font-size: 0.9rem;"></div>
+                    </div>
+
+                    <!-- Audio Scanner Card -->
+                    <div id="audio-card" class="result-card">
+                        <div class="section-title">
+                            <i class="fas fa-microphone-lines" style="color: var(--accent)"></i> Deepfake Audio Scanner
+                        </div>
+                        <div class="input-group">
+                            <input type="file" id="audioInput" accept="audio/*">
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">Supported formats:
+                            WAV, MP3, OGG</p>
+                        <button class="btn-action" onclick="scanAudio()">
+                            <i class="fas fa-wave-square"></i> Analyze Audio
+                        </button>
+                        <div id="audioResult" class="result-output">Upload audio to analyze...</div>
+                    </div>
+
+                    <!-- File Scanner Card -->
+                    <div id="file-card" class="result-card">
+                        <div class="section-title">
+                            <i class="fas fa-file-shield" style="color: var(--danger)"></i> File Malware Scanner
+                        </div>
+                        <div class="input-group">
+                            <input type="file" id="fileInput">
+                        </div>
+                        
+                        <!-- Toggle Switch for Network Access -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; background: var(--input-bg); padding: 10px 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-network-wired" style="color: var(--text-muted); font-size: 1.2rem;" id="networkIcon"></i>
+                                <div>
+                                    <strong id="networkLabel" style="color: var(--text-main);">Network Access: DISABLED</strong>
+                                    <div style="font-size: 0.8rem; color: var(--text-muted);">Allow sandbox to access the internet</div>
+                                </div>
+                            </div>
+                            <label class="switch" style="position: relative; display: inline-block; width: 50px; height: 28px;">
+                                <input type="checkbox" id="networkToggle" style="opacity: 0; width: 0; height: 0;" onchange="toggleNetwork()">
+                                <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); border-radius: 28px; transition: .4s;">
+                                    <span style="position: absolute; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; border-radius: 50%; transition: .4s;"></span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <button class="btn-action" onclick="scanFile()">
+                            <i class="fas fa-bug"></i> Scan File
+                        </button>
+                        <div id="fileResult" class="result-output">Upload file to scan...</div>
+                    </div>
+
+                    <!-- Email Sandbox Card -->
+                    <div id="email-card" class="result-card">
+                        <div class="section-title">
+                            <i class="fas fa-envelope-open" style="color: #ff6b6b"></i> Unified Email Sandbox
+                        </div>
+                        <p style="font-size: 0.9rem; margin-bottom: 15px; color: var(--text-muted)">
+                            Upload an `.eml` file. The sandbox will dynamically extract text, URLs, and attachments, and route them to their respective Guards automatically.
+                        </p>
+                        <div class="input-group">
+                            <input type="file" id="emailInput" accept=".eml">
+                        </div>
+                        <button class="btn-action" onclick="scanEmail()" style="background: #ff6b6b;">
+                            <i class="fas fa-shield-virus"></i> Analyze Email
+                        </button>
+                        <div id="emailResult" class="result-output">Upload .eml to sandbox...</div>
+                    </div>
+
+
+
+                    <!-- Secure Chat Card -->
+                    <div id="chat-card" class="result-card">
+                        <div class="section-title">
+                            <i class="fas fa-comments" style="color: var(--success)"></i> Protected AI Chat
+                        </div>
+                        <p style="font-size: 0.9rem; margin-bottom: 15px; color: var(--text-muted)">
+                            Explore how the GenAI Guard interceptor actively protects LLM inputs. Try an adversarial prompt!
+                        </p>
+                        
+                        <!-- Toggle Switch -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; background: var(--input-bg); padding: 10px 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-shield-alt" style="color: var(--primary); font-size: 1.2rem;" id="shieldIcon"></i>
+                                <div>
+                                    <strong id="shieldLabel" style="color: var(--primary);">GenAI Shield: ACTIVE</strong>
+                                    <div style="font-size: 0.8rem; color: var(--text-muted);">Intercepts and scans prompts using Llama MS</div>
+                                </div>
+                            </div>
+                            <label class="switch" style="position: relative; display: inline-block; width: 50px; height: 28px;">
+                                <input type="checkbox" id="shieldToggle" checked style="opacity: 0; width: 0; height: 0;" onchange="toggleShield()">
+                                <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--primary); border-radius: 28px; transition: .4s;">
+                                    <span style="position: absolute; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; border-radius: 50%; transition: .4s;"></span>
+                                </span>
+                            </label>
+                            <style>
+                                input:checked + .slider { background-color: var(--primary); }
+                                input:not(:checked) + .slider { background-color: var(--border-color); }
+                                input:checked + .slider > span { transform: translateX(22px); }
+                            </style>
+                        </div>
+
+                        <div id="chatWindow" style="background:var(--input-bg); border:1px solid var(--border-color); border-radius:8px; height:350px; padding:20px; overflow-y:auto; margin-bottom:15px; display:flex; flex-direction:column; gap:15px; transition: 0.3s border-color;">
+                            <div style="align-self: flex-start; background: #fff; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border-color); max-width: 80%; line-height:1.5;">
+                                <i class="fas fa-robot" style="color: var(--success); margin-right: 5px;"></i> 
+                                Hello! I am a helpful AI. All my inputs are automatically monitored and intercepted by GenAI Guard to prevent malicious attacks. What can I help you with today?
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="chatInput" placeholder="Type a message or a malicious prompt..." style="flex:1;" onkeypress="if(event.key === 'Enter') sendSecureChat()">
+                            <button class="btn-action" onclick="sendSecureChat()" style="background: var(--success)">
+                                <i class="fas fa-paper-plane"></i> Send
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Gmail Stream Card -->
+                    <div id="gmail-stream-card" class="result-card">
+                        <div class="section-title">
+                            <i class="fas fa-stream" style="color: #00ffcc"></i> Live Gmail Stream
+                        </div>
+                        <p style="font-size: 0.9rem; margin-bottom: 15px; color: var(--text-muted)">
+                            Real-time pipeline of background Gmail synchronization. Emails are automatically scanned and quarantined if malicious.
+                        </p>
+                        <div id="gmailStreamFeed" style="display: flex; flex-direction: column; gap: 15px; max-height: 600px; overflow-y: auto;">
+                            <!-- Stream items injected here -->
+                        </div>
+                    </div>
+
+                </section>
+            </div>
+
+            <!-- Right Column: Recent Alerts -->
+            <aside class="column-alerts">
+                <div class="alerts-panel">
+                    <div class="section-title">
+                        <i class="fas fa-bell"></i> Recent Alerts
+                    </div>
+                    <div id="alertsList">
+                        <div style="text-align: center; color: var(--text-muted); padding: 20px;">
+                            <i class="fas fa-circle-notch fa-spin"></i> Loading...
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,56 @@
+# Environments
+venv/
+env/
+.venv/
+.env
+.env.local
+
+# Python Cache and Compilation
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# IDE and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+
+# Logs and Local Data
+logs/
+*.log
+
+# Temporary / Build Files
+.tmp/
+tmp/
+*.sqlite3
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# ML Models and Large Artifacts
+
+*.pkl
+*.pth
+*.h5
+*.bin
+*.joblib
+*.model
+*.onnx
+
+# Ignore specific model directories
+**/models/
+models/
+services/audio_guard/core/output/
+
+# API Credentials and Secrets
+credentials.json
+token.json
+
+# Additional Large Extensions
+*.safetensors
