@@ -2,7 +2,7 @@
 
 > **A comprehensive, multi-layered, and AI-driven cybersecurity platform designed to protect applications and end-users from sophisticated zero-day threats.** 
 
-GenAi-Guard surpasses traditional signature-based security by combining classical Machine Learning (XGBoost) for rapid pattern recognition with the deep semantic understanding of Large Language Models (offline LLaMA 3 integration). It operates as a coordinated suite of microservices, analyzing text, emails, web links, browser cookies, and raw files in real-time.
+GenAi-Guard surpasses traditional signature-based security by combining classical Machine Learning (XGBoost/Random Forest) for rapid pattern recognition with the deep semantic understanding of Large Language Models (offline LLaMA 3 integration). It operates as a coordinated suite of microservices, analyzing text, emails, web links, browser cookies, voice audio, and raw files in real-time.
 
 ---
 
@@ -30,10 +30,12 @@ graph TD
         API --> WebGuard[Web Guard]
         API --> FileGuard[File Guard]
         API --> EmailGuard[Email Guard]
+        API --> AudioGuard[Audio Guard]
         
         TextGuard --> RiskEngine{Risk Engine}
         WebGuard --> RiskEngine
         FileGuard --> RiskEngine
+        AudioGuard --> RiskEngine
         EmailGuard -. Orchestrates .-> TextGuard
         EmailGuard -. Orchestrates .-> WebGuard
         EmailGuard -. Orchestrates .-> FileGuard
@@ -46,6 +48,7 @@ graph TD
         WebGuard == "SHAP Explanations" ==> LLM
         
         FileGuard == "Untrusted Binaries" ==> Sandbox["Docker FileSandbox (Port 8003)"]
+        AudioGuard == "Deepfake Scan" ==> AudioMicro["Audio Microservice (Port 8002)"]
     end
 ```
 
@@ -104,6 +107,13 @@ The file is moved into a highly restricted, ephemeral Docker container (`sandbox
 *   **Syscall Tracing (`strace`):** The system monitors exactly what the file tries to do. Did it attempt to read `/etc/passwd`? Did it spawn a hidden `/bin/bash` shell?
 *   **Network Capture (`tcpdump`):** If network access is temporarily permitted, the sandbox captures all external IP/Port connection attempts (often revealing Command & Control servers).
 *   **LLM Behavioral Analysis:** The resulting logs are parsed into JSON and fed to the LLM. The LLM acts as a malware reverse-engineer, summarizing the file's behavior and issuing a final risk score based on its actions. Once complete, the container is destroyed.
+
+### 5. 🎙️ Audio Guard (Deepfake & Voice Clone Detection)
+**Endpoint:** `POST /audio/detect-voice`
+
+Audio Guard acts as a defense against AI-generated voice scams and deepfakes. It operates by analyzing the acoustic properties of an uploaded voice file, coordinating with its isolated microservice.
+*   **Acoustic Feature Extraction:** Uses `librosa` to extract MFCC (Mel-frequency cepstral coefficients) features, analyzing the hidden vocal signatures of an audio clip.
+*   **Machine Learning Classification:** The extracted audio vectors are evaluated by a custom-trained Machine Learning model (Random Forest) which accurately differentiates natural human speaking variance versus synthetically generated AI voices.
 
 ---
 
@@ -175,11 +185,15 @@ ollama serve
 cd services/llm_guard
 uvicorn main:app --port 8001
 
-# Terminal 3: Start the Docker Sandbox Controller (Port 8003)
+# Terminal 3: Start the Audio Guard Microservice (Port 8002)
+cd services/audio_guard
+uvicorn main:app --port 8002
+
+# Terminal 4: Start the Docker Sandbox Controller (Port 8003)
 cd FileSandbox
 uvicorn main:app --port 8003
 
-# Terminal 4: Start the Main GenAi-Guard API (Port 8000)
+# Terminal 5: Start the Main GenAi-Guard API (Port 8000)
 cd app
 uvicorn main:app --port 8000 --reload
 ```
